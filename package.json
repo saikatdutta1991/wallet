@@ -11,8 +11,12 @@
   "author": "Saikat Dutta",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "knex": "^0.20.10",
+    "log4js": "^6.1.2",
+    "mysql": "^2.18.1",
     "nodemon": "^2.0.2"
   }
 }
