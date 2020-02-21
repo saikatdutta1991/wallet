@@ -2,10 +2,11 @@ module.exports = {
 
 	client: 'mysql',
 	connection: {
-		host: 'bmo3ywktxeht1g7vdwuf-mysql.services.clever-cloud.com',
-		database: 'bmo3ywktxeht1g7vdwuf',
-		user: 'uypdwhwnf5pbuncj',
-		password: 'UBWE6TMXTOKoBmAgiEPn'
+		host: process.env.DB_HOST,
+		database: process.env.DB_NAME,
+		user: process.env.DB_USER,
+		password: process.env.DB_PASS,
+		timezone: 'UTC'
 	},
 	pool: {
 		min: 2,
