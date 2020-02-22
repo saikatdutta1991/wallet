@@ -9,15 +9,6 @@ exports.up = async function (knex, Promise) {
         table.datetime('updated_at').defaultTo(knex.fn.now());
     });
 
-    await knex.schema.createTable('holdings', function (table) {
-        table.bigIncrements('id').unsigned().notNullable();
-        table.uuid('uuid').notNullable();
-        table.bigInteger('wallet_id').unsigned().references('id').inTable('wallets').onDelete('CASCADE');
-        table.decimal('amount').defaultTo(0.00);
-        table.datetime('expires_at').defaultTo(knex.fn.now());
-        table.datetime('created_at').defaultTo(knex.fn.now());
-        table.datetime('updated_at').defaultTo(knex.fn.now());
-    });
 
     await knex.schema.createTable('transactions', function (table) {
         table.bigIncrements('id').unsigned().notNullable();
@@ -27,6 +18,8 @@ exports.up = async function (knex, Promise) {
         table.decimal('pre_amount').defaultTo(0.00);
         table.decimal('amount').defaultTo(0.00);
         table.decimal('post_amount').defaultTo(0.00);
+        table.datetime('expires_at').nullable().comment('On hold amount expire time');
+        table.string('status', 50).defaultTo('');
         table.string('description', 256).defaultTo('');
         table.json('meta_data');
         table.datetime('created_at').defaultTo(knex.fn.now());
