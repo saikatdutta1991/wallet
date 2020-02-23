@@ -18,4 +18,13 @@ app.use(function (req, res, next) {
 });
 /** cross domain api call end*/
 
+/** setup body parsers */
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+/** setup body parsers end*/
+
+
+/** load api routes */
+app.use('/api/v1/', require('./app/routes/api'));
+
 app.listen(port, () => logger.info(`Server started & listening on port ${port}`));
