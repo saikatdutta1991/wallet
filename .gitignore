@@ -2,3 +2,5 @@
 .env.development
 .env.production
 yarn.lock
+yarn-error.log
+package-lock.json

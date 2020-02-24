@@ -5,7 +5,6 @@ const WalletController = require('../controllers/wallet');
 const TransctionController = require('../controllers/transaction');
 
 
-
 /** insert api authentication middleware */
 router.use(apiAuthCheck);
 
@@ -18,5 +17,12 @@ router.post('/wallets/:id/debit/init', TransctionController.initDebit);
 router.post('/wallets/:id/credit', TransctionController.credit);
 router.delete('/wallets/:id/transaction/:txnid/release', TransctionController.release);
 router.patch('/wallets/:id/transaction/:txnid/complete', TransctionController.complete);
+router.get('/wallets/:id/transactions', TransctionController.all);
+router.get('/wallets/:id/transactions/:txnid', TransctionController.getById);
 
-module.exports = router;
+
+
+module.exports = {
+  prefix: '/api/v1/',
+  router
+};

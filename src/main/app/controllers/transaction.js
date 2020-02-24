@@ -16,6 +16,58 @@ const {
 class TransactionController {
 
 	/**
+	 * Get single transaction by id
+	 * @param {*} req 
+	 * @param {*} res 
+	 */
+	static async getById(req, res) {
+
+		const wallet = await Wallet.getByGuid(req.params.id); // get walllet by id
+		const transaction = await Transaction.query().findOne({
+			wallet_id: wallet ? wallet.id : 0,
+			transaction_id: req.params.txnid
+		});
+
+		if(!transaction) {
+			return sendResponse(res, codes.NOT_FOUND, false, 'NOT_FOUND', 'Transaction not found');
+		}
+
+		return sendResponse(res, codes.OK, true, 'OK', 'Transaction fetched successfully', _.omit(transaction, ['id', 'wallet_id']));
+	}
+
+
+	/**
+	 * Get all transactions of a particular wallet
+	 * @param {*} req 
+	 * @param {*} res 
+	 */
+	static async all(req, res) {
+		/** validate input */
+		const {
+			error
+		} = Joi.object({
+			skip: Joi.number().min(0).optional(),
+			take: Joi.number().min(0).optional(),
+		}).validate(req.query);
+
+		if (error) {
+			return sendResponse(res, codes.BAD_REQUEST, false, 'BAD_REQUEST', error.message);
+		}
+
+		const wallet = await Wallet.getByGuid(req.params.id); // get walllet by id
+
+		const transactions = await Transaction.query()
+			.where('wallet_id', wallet.id)
+			.select('transaction_id', 'reference_id', 'pre_amount', 'amount', 'post_amount', 'expires_at', 'status', 'description', 'created_at', 'updated_at')
+			.orderBy('created_at', 'desc')
+			.limit(req.query.take)
+			.offset(req.query.skip);
+
+		sendResponse(res, codes.OK, true, 'OK', "Transactions fetched successfully", transactions);
+
+	}
+
+	/**
 	 * Add balance to wallet
 	 * @param {*} req 
 	 * @param {*} res 

@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('./app/helpers/logger');
+const Router = require('./boot/router');
 const port = process.env.PORT;
 
 /** creating app instance */
@@ -20,11 +21,14 @@ app.use(function (req, res, next) {
 
 /** setup body parsers */
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 /** setup body parsers end*/
 
-
-/** load api routes */
-app.use('/api/v1/', require('./app/routes/api'));
+/** booting app start */
+const router = new Router(app); // this router is not express router
+router.load();
+/** booting app end */
 
 app.listen(port, () => logger.info(`Server started & listening on port ${port}`));
