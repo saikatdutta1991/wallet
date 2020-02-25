@@ -15,10 +15,12 @@ router.delete('/wallets/:id', WalletController.delete);
 
 router.post('/wallets/:id/debit/init', TransctionController.initDebit);
 router.post('/wallets/:id/credit', TransctionController.credit);
-router.delete('/wallets/:id/transaction/:txnid/release', TransctionController.release);
-router.patch('/wallets/:id/transaction/:txnid/complete', TransctionController.complete);
+router.delete('/wallets/:id/transactions/:txnid/release', TransctionController.release);
+router.patch('/wallets/:id/transactions/:txnid/complete', TransctionController.complete);
 router.get('/wallets/:id/transactions', TransctionController.all);
 router.get('/wallets/:id/transactions/:txnid', TransctionController.getById);
+router.patch('/wallets/:id/transactions/:txnid', TransctionController.update);
+// router.get('/wallets/:id:/transactions/reference/:ref', TransctionController.getByReference);
 
 
 

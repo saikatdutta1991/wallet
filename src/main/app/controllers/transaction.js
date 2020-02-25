@@ -16,6 +16,51 @@ const {
 class TransactionController {
 
 	/**
+	 * Update transaction record 
+	 * This controller can only update reference_id, description, expires_at
+	 * If transaction only in hold
+	 * @param {*} req 
+	 * @param {*} res 
+	 */
+	static async update(req, res) {
+
+
+		/** request validation */
+		const {
+			error
+		} = Joi.object({
+			reference_id: Joi.string().min(1).max(128).optional(),
+			expires_at: date.isSameOrAfter(),
+			description: Joi.string().min(0).max(256).optional()
+		}).validate(req.body);
+
+		if (error) {
+			return sendResponse(res, codes.BAD_REQUEST, false, 'BAD_REQUEST', error.message);
+		}
+
+		/** fetch wallet by guid and check if reference id exists */
+		const [wallet, isReferenceUnique, transaction] = await Promise.all([
+			Wallet.getByGuid(req.params.id),
+			Transaction.isReferenceUnique(req.params.txnid, req.body.reference_id),
+			Transaction.getByTxnId(req.params.txnid)
+		]);
+
+		if (!wallet || !isReferenceUnique || !transaction) {
+			return sendResponse(res, codes.BAD_REQUEST, false, 'BAD_REQUEST', 'Bad requeest or duplicate reference_id');
+		}
+
+		const updatedTransaction = await transaction.$query().patchAndFetch({
+			reference_id: req.body.reference_id ? req.body.reference_id : transaction.reference_id,
+			description: req.body.description ? req.body.description : transaction.description,
+			expires_at: req.body.expires_at ? req.body.expires_at : transaction.expires_at,
+		});
+
+		return sendResponse(res, codes.OK, true, 'OK', 'Transaction updated successfully', _.omit(updatedTransaction, ['id', 'wallet_id']));
+
+	}
+
+
+	/**
 	 * Get single transaction by id
 	 * @param {*} req 
 	 * @param {*} res 
@@ -28,7 +73,7 @@ class TransactionController {
 			transaction_id: req.params.txnid
 		});
 
-		if(!transaction) {
+		if (!transaction) {
 			return sendResponse(res, codes.NOT_FOUND, false, 'NOT_FOUND', 'Transaction not found');
 		}
 
