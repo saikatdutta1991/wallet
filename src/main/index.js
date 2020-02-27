@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const logger = require("./app/helpers/logger");
 const Router = require("./boot/router");
+const Cron = require('./boot/cron');
 const port = process.env.PORT;
 
 /** creating app instance */
@@ -33,6 +34,8 @@ app.use(
 /** booting app start */
 const router = new Router(app); // this router is not express router
 router.load();
+const cron = new Cron();
+cron.register();
 /** booting app end */
 
 app.listen(port, () =>
