@@ -23,6 +23,17 @@ class Wallet extends guid(Base) {
     json = super.$formatJson(json, options);
     return _.omit(json, this.$secureFields);
   }
+
+  static relationMappings = {
+    transactions: {
+      relation: Base.HasManyRelation,
+      modelClass: `${__dirname}/transaction`,
+      join: {
+        from: "wallets.id",
+        to: "transactions.wallet_id"
+      }
+    }
+  };
 }
 
 module.exports = Wallet;

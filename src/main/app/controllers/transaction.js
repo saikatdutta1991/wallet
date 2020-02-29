@@ -5,6 +5,7 @@ const Transaction = require("../models/transaction");
 const date = require("../helpers/date");
 const { codes, constants } = require("../../config/api");
 const { sendResponse } = require("../helpers/api");
+const TransactionHelper = require("../helpers/transaction");
 
 class TransactionController {
   /**
@@ -451,11 +452,12 @@ class TransactionController {
    * @param {*} res
    */
   static async release(req, res) {
-    /** fetch wallet by guid and and transaction by txnid */
-    const [wallet, transaction] = await Promise.all([
-      Wallet.getByGuid(req.params.id),
-      Transaction.getByTxnId(req.params.txnid)
-    ]);
+    /** fetch wallet and transaction */
+    const wallet = await Wallet.getByGuid(req.params.id);
+    const transaction = await Transaction.query().findOne({
+      wallet_id: wallet ? wallet.id : 0,
+      transaction_id: req.params.txnid
+    });
 
     if (!wallet || !transaction || transaction.status !== constants.ON_HOLD) {
       return sendResponse(
@@ -467,42 +469,21 @@ class TransactionController {
       );
     }
 
-    /** release process starts here */
-    const trx = await Wallet.startTransaction();
+    const updatedWallet = await TransactionHelper.releaseTransaction(
+      wallet,
+      transaction
+    );
 
-    try {
-      const updatedWallet = await Wallet.query(trx).patchAndFetchById(
-        wallet.id,
-        {
-          amount: wallet.amount + Math.abs(transaction.amount),
-          hold_amount: wallet.hold_amount - Math.abs(transaction.amount)
-        }
-      );
-
-      await Transaction.query(trx).deleteById(transaction.id);
-
-      await trx.commit();
-
-      sendResponse(
-        res,
-        codes.OK,
-        true,
-        "RELEASED",
-        "Transaction released successfully.",
-        {
-          updatedWallet: _.omit(updatedWallet, ["id"])
-        }
-      );
-    } catch (err) {
-      await trx.rollback();
-      return sendResponse(
-        res,
-        codes.INTERNAL_SERVER_ERROR,
-        false,
-        "INTERNAL_SERVER_ERROR",
-        "Failed to release transaction"
-      );
-    }
+    sendResponse(
+      res,
+      codes.OK,
+      true,
+      "RELEASED",
+      "Transaction released successfully.",
+      {
+        updatedWallet: _.omit(updatedWallet, ["id"])
+      }
+    );
   }
 
   /**
