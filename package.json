@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "./bin/dev.sh",
-    "prod": "./bin/prod.sh"
+    "prod": "./bin/prod.sh",
+    "start": "node ./src/main/index.js"
   },
   "author": "Saikat Dutta",
   "license": "ISC",
