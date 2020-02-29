@@ -8,7 +8,6 @@ const { constants } = require("../../config/api");
 const Moment = require("moment");
 
 cron.schedule("*/30 * * * * *", () => {
-  Logger.info('Transaction release cron started');
   const query = Transaction.query()
     .where("status", constants.ON_HOLD)
     .where("expires_at", "<", Moment.utc().format("YYYY-MM-DD HH:mm:ss"))
