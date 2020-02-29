@@ -1,5 +1,6 @@
 const Wallet = require("../models/wallet");
 const Transaction = require("../models/transaction");
+const { constants } = require("../../config/api");
 
 /**
  * Release on hold transction
@@ -12,6 +13,10 @@ const Transaction = require("../models/transaction");
  * @return {Wallet} Updated wallet object
  */
 exports.releaseTransaction = async (wallet, transaction) => {
+  if (transaction.status !== constants.ON_HOLD) {
+    return false;
+  }
+
   const trx = await Wallet.startTransaction();
   try {
     const updatedWallet = await Wallet.query(trx).patchAndFetchById(wallet.id, {
