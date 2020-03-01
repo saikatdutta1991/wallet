@@ -29,8 +29,8 @@ exports.chunk = async (queryBuilder, chunkSize, handler) => {
 /**
  * Get number of records
  *
- * It clones the queryBuilder object and fetch records count,
- * So that queryBuilder objection does not get modified
+ * It uses the query builder and returns the total 
+ * result count of the applied query
  *
  * @author Saikat Dutta <saikatdutta1991@gmail.com>
  *
@@ -39,7 +39,5 @@ exports.chunk = async (queryBuilder, chunkSize, handler) => {
  * @returns {number}
  */
 const getCount = async queryBuilder => {
-  const clonedQueryBuilder = _.cloneDeep(queryBuilder);
-  const record = await clonedQueryBuilder.count("*", { as: "count" });
-  return _.head(record).count;
+  return await queryBuilder.resultSize();
 };
