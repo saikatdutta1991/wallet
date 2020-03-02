@@ -105,13 +105,15 @@ class TransactionController {
         .min(1)
         .max(128)
         .optional(),
-      expires_at: Joi.string().custom((value, helpers) => {
-        try {
-          return DateHelper.isSameOrAfter(value);
-        } catch (err) {
-          return helpers.message(err.message);
-        }
-      }).required(),
+      expires_at: Joi.string()
+        .custom((value, helpers) => {
+          try {
+            return DateHelper.isSameOrAfter(value);
+          } catch (err) {
+            return helpers.message(err.message);
+          }
+        })
+        .required(),
       description: Joi.string()
         .min(0)
         .max(256)
@@ -128,11 +130,14 @@ class TransactionController {
       );
     }
 
-    /** fetch wallet by guid and check if reference id exists */
-    const [wallet, isReferenceUnique, transaction] = await Promise.all([
-      Wallet.getByGuid(req.params.id),
+    /** fetch transaction by wallet id and check if new reference_id unique */
+    const wallet = await Wallet.getByGuid(req.params.id);
+    const [isReferenceUnique, transaction] = await Promise.all([
       Transaction.isReferenceUnique(req.params.txnid, req.body.reference_id),
-      Transaction.getByTxnId(req.params.txnid)
+      Transaction.query().findOne({
+        transaction_id: req.params.txnid,
+        wallet_id: wallet ? wallet.id : 0
+      })
     ]);
 
     if (!wallet || !isReferenceUnique || !transaction) {
@@ -360,13 +365,15 @@ class TransactionController {
       amount: Joi.number()
         .min(0.01)
         .required(),
-      expires_at: Joi.string().custom((value, helpers) => {
-        try {
-          return DateHelper.isSameOrAfter(value);
-        } catch (err) {
-          return helpers.message(err.message);
-        }
-      }).required(),
+      expires_at: Joi.string()
+        .custom((value, helpers) => {
+          try {
+            return DateHelper.isSameOrAfter(value);
+          } catch (err) {
+            return helpers.message(err.message);
+          }
+        })
+        .required(),
       description: Joi.string()
         .min(0)
         .max(256)
