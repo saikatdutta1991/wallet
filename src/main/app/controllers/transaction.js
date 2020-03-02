@@ -2,7 +2,7 @@ const _ = require("lodash");
 const Joi = require("@hapi/joi");
 const Wallet = require("../models/wallet");
 const Transaction = require("../models/transaction");
-const date = require("../helpers/date");
+const DateHelper = require("../helpers/date");
 const { codes, constants } = require("../../config/api");
 const { sendResponse } = require("../helpers/api");
 const TransactionHelper = require("../helpers/transaction");
@@ -105,7 +105,13 @@ class TransactionController {
         .min(1)
         .max(128)
         .optional(),
-      expires_at: date.isSameOrAfter(),
+      expires_at: Joi.string().custom((value, helpers) => {
+        try {
+          return DateHelper.isSameOrAfter(value);
+        } catch (err) {
+          return helpers.message(err.message);
+        }
+      }).required(),
       description: Joi.string()
         .min(0)
         .max(256)
@@ -354,7 +360,13 @@ class TransactionController {
       amount: Joi.number()
         .min(0.01)
         .required(),
-      expires_at: date.isSameOrAfter(),
+      expires_at: Joi.string().custom((value, helpers) => {
+        try {
+          return DateHelper.isSameOrAfter(value);
+        } catch (err) {
+          return helpers.message(err.message);
+        }
+      }).required(),
       description: Joi.string()
         .min(0)
         .max(256)

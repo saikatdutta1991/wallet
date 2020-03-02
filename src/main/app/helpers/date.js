@@ -1,40 +1,20 @@
-const Joi = require("@hapi/joi");
 const moment = require("moment");
 
 /**
- * This method returns @hap/joi schema to validate
+ * This method to validate
  * is given datetime is greater than current time.
  * It assumes, timezone is in utc
  * and takes Date time in format YYYY-MM-DD HH:mm:ss
  */
-module.exports.isSameOrAfter = () => {
-  return Joi.extend(joi => {
-    return {
-      type: "isSameOrAfter",
-      base: joi.any(),
-      messages: {
-        "invalid.max": "Must be same or greater than current time.",
-        "invalid.datetime": "Datetime format YYYY-MM-DD HH:mm:ss"
-      },
-      validate(value, helpers) {
-        const givenDate = moment.utc(value, "YYYY-MM-DD HH:mm:ss", true);
+exports.isSameOrAfter = date => {
+  const givenDate = moment.utc(date, "YYYY-MM-DD HH:mm:ss", true);
+  if (!givenDate.isValid()) {
+    throw new Error("Datetime format YYYY-MM-DD HH:mm:ss");
+  }
 
-        if (!givenDate.isValid()) {
-          return {
-            value,
-            errors: helpers.error("invalid.datetime")
-          };
-        }
+  if (!givenDate.isSameOrAfter(moment.utc())) {
+    throw new Error("Must be same or greater than current time.");
+  }
 
-        const isSameOrAfter = givenDate.isSameOrAfter(moment.utc());
-        if (!isSameOrAfter) {
-          return {
-            value,
-            errors: helpers.error("invalid.max")
-          };
-        }
-      },
-      rules: {}
-    };
-  }).isSameOrAfter();
+  return date;
 };
