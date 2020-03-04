@@ -30,54 +30,57 @@ A standalong virtual wallet service that can be used in any project. It has publ
 
 ## Directory Structure
 ```shell
-|-- Projects
-    |-- .env
-    |-- .env.development
-    |-- .env.sample
-    |-- .gitignore
-    |-- README.md
-    |-- directoryList.md
-    |-- knexfile.js
-    |-- package-lock.json
-    |-- package.json
-    |-- bin
-    |   |-- dev.sh
-    |   |-- prod.sh
-    |-- docs
-    |   |-- APIDOC.md
+|-- Root Directroy (wallet)
+    |-- .env --> Environment variables( run time will be cloned from specific .env )
+    |-- .env.development --> Environment variables for development
+    |-- .env.production --> Environment variables for production
+    |-- knexfile.js --> Config for knex migration commands
+    |-- package.json --> Node packages list
+    |-- bin --> Custom npm & usefull shell scripts
+    |-- docs --> Documentations
     |-- src
         |-- main
-            |-- index.js
+            |-- index.js --> Entry point for express server
             |-- app
-            |   |-- controllers
-            |   |   |-- transaction.js
-            |   |   |-- wallet.js
-            |   |-- crons
-            |   |   |-- releaseTransactions.js
-            |   |-- helpers
-            |   |   |-- api.js
-            |   |   |-- date.js
-            |   |   |-- knex.js
-            |   |   |-- logger.js
-            |   |   |-- queryChunk.js
-            |   |   |-- transaction.js
-            |   |-- middlewares
-            |   |   |-- apiAuthCheck.js
-            |   |-- models
-            |   |   |-- base.js
-            |   |   |-- chunkQueryBuilder.js
-            |   |   |-- transaction.js
-            |   |   |-- wallet.js
-            |   |-- routes
-            |       |-- api.js
-            |-- boot
-            |   |-- cron.js
-            |   |-- router.js
-            |-- config
-            |   |-- api.js
-            |   |-- database.js
-            |-- database
-                |-- migrations
-                    |-- 20200222010223_wallets_tables.js
+            |   |-- controllers --> Controllers files
+            |   |-- crons --> Cron jobs & files in this directory imported automatically
+            |   |-- helpers --> All sort of helpers
+            |   |-- middlewares --> All sort of middlewares
+            |   |-- models --> All modes should be here
+            |   |-- routes --> Routes & files in this directory imported automatically
+            |-- boot --> Booting utilities
+            |-- config --> App configurations
+            |   |-- api.js --> Api related configs & constants
+            |   |-- database.js --> Databse configuration
+            |-- database --> Databasse table migrations and seeds
 ```
+
+## Environment Setup
+```shell
+ Create .env.development & .env.production files in root directory.
+ Clone the .env.sample into above two files and change the values accordingly.
+```
+
+## Run
+```javascript
+ Open terminal and move to the root directory.  Do the following steps :
+ 
+ # Insall npm dependencies.
+ > npm install
+ 
+ # Run migration to create tables
+ > NODE_ENV=development ./node_modules/.bin/knex migrate:latest
+ 
+ # To start server
+ > npm run dev
+ 	or
+ > npm run prod
+ 
+ *Note :  if heroku set the .env
+```
+
+## Links
+- [Postman v1 HTTP Api docs](https://documenter.getpostman.com/view/3133283/SzKVQJ7Y "Postman v1 HTTP Api docs")
+- [APIDOC.md](https://github.com/saikatdutta1991/wallet/blob/master/docs/APIDOC.md "APIDOC.md")
+- [heroku demo](https://wallet-service-v1.herokuapp.com "APIDOC.md")
 
