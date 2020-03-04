@@ -1,7 +1,7 @@
 # Wallet Service
 A standalong virtual wallet service that can be used in any project. It has public HTTP apis for creating, crediting, debiting, managing virtual wallets.
 
-##Features
+## Features
 - Creating wallet
 - Crediting wallet
 - Debiting wallet
@@ -11,7 +11,7 @@ A standalong virtual wallet service that can be used in any project. It has publ
 - Fetch transactions
 - Search transactions by filtering parameters
 
-##Used Libraries
+## Used Libraries
 |  Name | Version  | Use  |
 | ------------ | ------------ | ------------ |
 | @hapi/joi  | ^17.1.0  | Request param validations  |
@@ -28,7 +28,7 @@ A standalong virtual wallet service that can be used in any project. It has publ
 | objection  | ^2.1.3  | This is ORM Library for mysql  |
 | objection-guid  | ^3.0.2  | Auto generate guid for record  |
 
-##Directory Structure
+## Directory Structure
 ```shell
 |-- Projects
     |-- .env
